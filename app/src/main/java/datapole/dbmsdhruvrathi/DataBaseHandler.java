@@ -9,6 +9,8 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import datapole.dbmsdhruvrathi.model.Playlist;
+
 /**
  * Created by dhruv on 18/2/17.
  */
@@ -17,10 +19,17 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "songsDB";   //database name
-    public static final String TABLE_SONGS = "songs";         //table name
+    public static final String TABLE_SONGS = "songs";//songs' table name
+    public static final String TABLE_PLAYLIST = "playlist";//playlists' table name
 
+    //SONGS TABLE COLUMNS
     public static final String KEY_ID = "id";
     public static final String KEY_SONG_ID = "songID";
+    //PLAYLIST TABLE COLUMNS
+    public static final String KEY_PLAYLIST_ID = "playlistID";
+    public static final String KEY_PLAYLIST_NAME = "NAME";
+
+
     private static final String TAG = "DataBaseHandler";
 
     public DataBaseHandler(Context context) {
@@ -29,10 +38,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_SONGS_TABLE = "CREATE TABLE " + TABLE_SONGS + "(" +
+        String CREATE_SONGS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_SONGS + "(" +
                 KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
                 + KEY_SONG_ID + " INTEGER" + ")";
+        String CREATE_PLAYLIST_TABLE = "CREATE TABLE IF NOT EXISTS  " + TABLE_PLAYLIST + "(" +
+                KEY_PLAYLIST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + KEY_PLAYLIST_NAME + " TEXT" + ")";
+
         db.execSQL(CREATE_SONGS_TABLE);
+        db.execSQL(CREATE_PLAYLIST_TABLE);
     }
 
     @Override
@@ -58,10 +71,21 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void addPlaylist(String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_PLAYLIST_NAME, name);
+
+
+        db.insert(TABLE_PLAYLIST, null, values);
+        db.close();
+    }
+
     public ArrayList<Integer> getSongsList() {
         Log.d(TAG, "afterArr");
         ArrayList<Integer> allSongsID = new ArrayList<>();
-        String selectQuery = "SELECT "+KEY_SONG_ID+" FROM " + TABLE_SONGS;
+        String selectQuery = "SELECT " + KEY_SONG_ID + " FROM " + TABLE_SONGS;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -69,13 +93,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 int id = cursor.getInt(0);
-                Log.d(TAG,"songsList:: "+id);
+                Log.d(TAG, "songsList:: " + id);
                 allSongsID.add(id);
             } while (cursor.moveToNext());
         }
         return allSongsID;
     }
-
 
 
     public ArrayList<Integer> getSongsQueue() {
@@ -93,6 +116,26 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         return allSongsID;
+    }
+
+    public ArrayList<Playlist> getPlaylistList() {
+        ArrayList<Playlist> mList = new ArrayList<>();
+        String selectQuery = "SELECT " + KEY_PLAYLIST_ID + "," + KEY_PLAYLIST_NAME + " FROM " + TABLE_PLAYLIST;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        Log.d(TAG, "selectQ:: " + selectQuery);
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(0);
+                String name = cursor.getString(1);
+                Log.d(TAG, "songsList:: " + id);
+                mList.add(new Playlist(id, name));
+            } while (cursor.moveToNext());
+        }
+
+        //return array list of all available playlists
+        return mList;
     }
 
 //    public void deleteContact(int songID) {

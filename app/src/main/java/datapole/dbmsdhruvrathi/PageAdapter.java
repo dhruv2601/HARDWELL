@@ -26,7 +26,7 @@ public class PageAdapter extends FragmentStatePagerAdapter {
                 return new MediaActivity();
 
             case 1:
-                return new ShowDB();
+                return new PlaylistActivity();
 
             case 2:
                 return new ShowDB();
