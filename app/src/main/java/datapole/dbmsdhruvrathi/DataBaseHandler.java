@@ -21,6 +21,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "songsDB";   //database name
     public static final String TABLE_SONGS = "songs";//songs' table name
     public static final String TABLE_PLAYLIST = "playlist";//playlists' table name
+    public static final String TABLE_CONTAINS = "contains";//relationship table name
 
     //SONGS TABLE COLUMNS
     public static final String KEY_ID = "id";
@@ -28,6 +29,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     //PLAYLIST TABLE COLUMNS
     public static final String KEY_PLAYLIST_ID = "playlistID";
     public static final String KEY_PLAYLIST_NAME = "NAME";
+//    //CONTAINS TABLE COLUMNS
+//    public static final String KEY_PLAY_ID="playID";
+//    public static final String KEY_SON_ID
 
 
     private static final String TAG = "DataBaseHandler";
@@ -42,10 +46,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
                 + KEY_SONG_ID + " INTEGER" + ")";
         String CREATE_PLAYLIST_TABLE = "CREATE TABLE IF NOT EXISTS  " + TABLE_PLAYLIST + "(" +
-                KEY_PLAYLIST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + KEY_PLAYLIST_NAME + " TEXT" + ")";
+                KEY_PLAYLIST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + KEY_PLAYLIST_NAME + " TEXT UNIQUE" + ")";
+
+        String CREATE_CONTAINS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_CONTAINS + "(" +
+                KEY_PLAYLIST_ID + " INTEGER," + KEY_SONG_ID + " INTEGER," +
+                "FOREIGN KEY(" + KEY_PLAYLIST_ID + ") REFERENCES " + TABLE_PLAYLIST + "(" + KEY_PLAYLIST_ID + ") ON DELETE CASCADE," +
+                "FOREIGN KEY(" + KEY_SONG_ID + ") REFERENCES " + TABLE_SONGS + "(" + KEY_SONG_ID + "));";
 
         db.execSQL(CREATE_SONGS_TABLE);
         db.execSQL(CREATE_PLAYLIST_TABLE);
+        db.execSQL(CREATE_CONTAINS_TABLE);
     }
 
     @Override
@@ -79,6 +89,17 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
 
         db.insert(TABLE_PLAYLIST, null, values);
+        db.close();
+    }
+
+    public void addSongToPlaylist(int songID, int playlistID) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_PLAYLIST_ID,playlistID);
+        values.put(KEY_SONG_ID,songID);
+
+        db.insert(TABLE_CONTAINS,null,values);
         db.close();
     }
 
@@ -134,6 +155,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
+        String a="select * from contains";
+        cursor = db.rawQuery(a, null);
+        if (cursor.moveToFirst()) {
+            do {
+                int playid = cursor.getInt(0);
+                int sid = cursor.getInt(1);
+                Log.d(TAG, "haha:: " +playid+"   "+ sid);
+
+            } while (cursor.moveToNext());
+        }
         //return array list of all available playlists
         return mList;
     }
