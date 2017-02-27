@@ -42,9 +42,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
         String CREATE_SONGS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_SONGS + "(" +
                 KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
                 + KEY_SONG_ID + " INTEGER" + ")";
+
         String CREATE_PLAYLIST_TABLE = "CREATE TABLE IF NOT EXISTS  " + TABLE_PLAYLIST + "(" +
                 KEY_PLAYLIST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + KEY_PLAYLIST_NAME + " TEXT UNIQUE" + ")";
 
@@ -86,7 +88,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_PLAYLIST_NAME, name);
 
-
         db.insert(TABLE_PLAYLIST, null, values);
         db.close();
     }
@@ -95,12 +96,30 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_PLAYLIST_ID,playlistID);
-        values.put(KEY_SONG_ID,songID);
+        values.put(KEY_PLAYLIST_ID, playlistID);
+        values.put(KEY_SONG_ID, songID);
 
-        db.insert(TABLE_CONTAINS,null,values);
+        db.insert(TABLE_CONTAINS, null, values);
         db.close();
     }
+
+    public ArrayList<Integer> getPlaylistSongs(String varPass) {
+        ArrayList<Integer> allSongsID = new ArrayList<>();
+        String selectQuery = "SELECT " + KEY_SONG_ID + " FROM " + TABLE_CONTAINS + " where " + KEY_PLAYLIST_ID.equals(varPass);
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        Log.d(TAG, "selectQ:: " + selectQuery);
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(0);
+                Log.d(TAG, "songsList:: " + id);
+                allSongsID.add(id);
+            } while (cursor.moveToNext());
+        }
+        return allSongsID;
+    }
+
 
     public ArrayList<Integer> getSongsList() {
         Log.d(TAG, "afterArr");
@@ -119,6 +138,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
         return allSongsID;
     }
+
     public ArrayList<Integer> getSongsQueue() {
         Log.d(TAG, "afterArr");
         ArrayList<Integer> allSongsID = new ArrayList<>();
@@ -152,13 +172,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        String a="select * from contains";
+        String a = "select * from contains";
         cursor = db.rawQuery(a, null);
         if (cursor.moveToFirst()) {
             do {
                 int playid = cursor.getInt(0);
                 int sid = cursor.getInt(1);
-                Log.d(TAG, "haha:: " +playid+"   "+ sid);
+                Log.d(TAG, "haha:: " + playid + "   " + sid);
 
             } while (cursor.moveToNext());
         }

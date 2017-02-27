@@ -58,9 +58,11 @@ public class ShowDB extends Fragment {
 
             TableView<String[]> tableView = (TableView<String[]>) view.findViewById(R.id.tableView);
             tableView.setDataAdapter(new SimpleTableDataAdapter(view.getContext(), DATA_TO_SHOW));
+            tableView.setHeaderBackground(R.drawable.backgroundone);
 
             TableView<String[]> tablePlaylist = (TableView<String[]>) view.findViewById(R.id.tablePlaylist);
             tablePlaylist.setDataAdapter(new SimpleTableDataAdapter(view.getContext(), DATA_TO_SHOW));
+            tablePlaylist.setHeaderBackground(R.drawable.backgroundone);
 
             clearDB = (AppCompatButton) view.findViewById(R.id.clear_db);
             db = new DataBaseHandler(getContext());

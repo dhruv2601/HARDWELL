@@ -2,6 +2,8 @@ package datapole.dbmsdhruvrathi;
 
 
 import android.content.DialogInterface;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -10,11 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import datapole.dbmsdhruvrathi.model.Playlist;
 import de.codecrafters.tableview.TableView;
+import de.codecrafters.tableview.listeners.TableDataClickListener;
 import de.codecrafters.tableview.toolkit.SimpleTableDataAdapter;
 
 public class PlaylistActivity extends Fragment {
@@ -26,6 +30,17 @@ public class PlaylistActivity extends Fragment {
 
     private static final String[][] NO_DATA = {{"There is nothing to show "}, {"in database"}};
     private static final String[][] DATA_TO_SHOW = new String[50][3];
+
+    public String songList[] = {
+            "onedance",
+            "landosky",
+            "roses",
+            "howyoulike",
+            "tvf"
+    };
+
+    final int[] songNo = {0};
+
 
     public PlaylistActivity() {
         // Required empty public constructor
@@ -55,9 +70,15 @@ public class PlaylistActivity extends Fragment {
                 DATA_TO_SHOW[i][1] = playlistList.get(i).getName();
             }
 
-            TableView<String[]> tableView = (TableView<String[]>) view.findViewById(R.id.tableView);
+            final TableView<String[]> tableView = (TableView<String[]>) view.findViewById(R.id.tableView);
             tableView.setDataAdapter(new SimpleTableDataAdapter(view.getContext(), DATA_TO_SHOW));
-
+            tableView.setHeaderBackground(R.drawable.backgroundone);
+            tableView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    tableView.addDataClickListener(new CarClickListener());
+                }
+            });
 
             createNew = (FloatingActionButton) view.findViewById(R.id.fab_add_playlist);
 
@@ -86,8 +107,73 @@ public class PlaylistActivity extends Fragment {
                 }
             });
         }
-
         return view;
     }
 
+    public class CarClickListener implements TableDataClickListener<PlaylistActivity> {
+        @Override
+        public void onDataClicked(int rowIndex, PlaylistActivity clickedCar) {
+            ArrayList<Integer> allSongsID = db.getPlaylistSongs(String.valueOf(rowIndex));
+
+            final MediaPlayer[] mPlayer = {MediaPlayer.create(getContext(), R.raw.onedance)};
+            if (mPlayer[0].isPlaying() == true) {
+                mPlayer[0].stop();
+            }
+
+            if (allSongsID.size() == 0) {
+                Toast.makeText(getContext(), "No Songs in Database, please add some songs!!", Toast.LENGTH_LONG).show();
+            } else {
+                final int first = allSongsID.get(0);
+                String firstSong = songList[first];
+                switch (first) {
+                    case 0:
+                        mPlayer[0] = MediaPlayer.create(getContext(), R.raw.onedance);
+                        break;
+                    case 1:
+                        mPlayer[0] = MediaPlayer.create(getContext(), R.raw.landosky);
+                        break;
+                    case 2:
+                        mPlayer[0] = MediaPlayer.create(getContext(), R.raw.roses);
+                        break;
+                    case 3:
+                        mPlayer[0] = MediaPlayer.create(getContext(), R.raw.howyoulike);
+                        break;
+                    case 4:
+                        mPlayer[0] = MediaPlayer.create(getContext(), R.raw.tvf);
+                        break;
+                }
+                mPlayer[0].setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mPlayer[0].start();
+
+                final ArrayList<Integer> finalAllSongsID = allSongsID;
+                mPlayer[0].setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        // Code to start the next audio in the sequence
+                        songNo[0] = ++songNo[0];
+                        int currID = finalAllSongsID.get(songNo[0]);
+                        switch (currID) {
+                            case 0:
+                                mPlayer[0] = MediaPlayer.create(getContext(), R.raw.onedance);
+                                break;
+                            case 1:
+                                mPlayer[0] = MediaPlayer.create(getContext(), R.raw.landosky);
+                                break;
+                            case 2:
+                                mPlayer[0] = MediaPlayer.create(getContext(), R.raw.roses);
+                                break;
+                            case 3:
+                                mPlayer[0] = MediaPlayer.create(getContext(), R.raw.howyoulike);
+                                break;
+                            case 4:
+                                mPlayer[0] = MediaPlayer.create(getContext(), R.raw.tvf);
+                                break;
+                        }
+                        mPlayer[0].setAudioStreamType(AudioManager.STREAM_MUSIC);
+                        mPlayer[0].start();
+                    }
+                });
+            }
+        }
+    }
 }

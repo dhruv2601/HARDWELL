@@ -34,6 +34,7 @@ public class allCardRecyclerViewAdapter
     private static MyClickListener myClickListener;
     private Context context;
     public DataBaseHandler db;
+    public int ind;
 
     public class DataObjectHolder extends RecyclerView.ViewHolder
             implements View
@@ -51,7 +52,7 @@ public class allCardRecyclerViewAdapter
         }
 
         int selected = 0;
-        ArrayList<String> playNames=new ArrayList<>();
+        ArrayList<String> playNames = new ArrayList<>();
         HashMap<String, Integer> map = new HashMap<>();
 
         @Override
@@ -60,31 +61,46 @@ public class allCardRecyclerViewAdapter
             db = new DataBaseHandler(context);
             playNames.clear();
             map.clear();
-            selected=0;
+            selected = 0;
 
             ArrayList<Playlist> playlistList = new ArrayList<>();
-            playlistList=db.getPlaylistList();
+            playlistList = db.getPlaylistList();
 
-            for (int i = 0; i < playlistList.size(); i++) {
+            int i = 0;
+            for (i = 0; i < playlistList.size(); i++) {
                 playNames.add(playlistList.get(i).getName());
                 map.put(playlistList.get(i).getName(), playlistList.get(i).getPid());
             }
-            final String [] plays = playNames.toArray(new String[playNames.size()]);
+            playNames.add("Current Queue");
+            map.put("Current Queue", i);
+            ind = i;
+            Log.d(TAG, "ind:: " + ind);
+
+            final String[] plays = playNames.toArray(new String[playNames.size()]);
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             // Set the dialog title
+            final ArrayList<Playlist> finalPlaylistList = playlistList;
             builder.setTitle("Choose playlists to add to").
                     setSingleChoiceItems(plays, selected,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     selected = map.get(plays[which]);
+                                    Log.d(TAG, "selected: " + selected);
                                 }
                             })
+
                     // Set the action buttons
                     .setPositiveButton("ADD", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
-                            db.addSongToPlaylist(getAdapterPosition(), selected);
+                            Log.d(TAG, "id:: " + id);
+                            if (selected == getAdapterPosition()) {
+                                db.addSong(getAdapterPosition());
+                                Log.d(TAG, "Added to curr queue");
+                            } else {
+                                db.addSongToPlaylist(getAdapterPosition(), selected);
+                            }
                         }
                     })
                     .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {

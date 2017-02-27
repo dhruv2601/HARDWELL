@@ -11,7 +11,8 @@
         android:id="@+id/tableView"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        table:tableView_columnCount="3" />
+        table:tableView_columnCount="3"
+        table:tableView_headerColor="@color/Color_Teal" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,9 +22,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:background="@color/red"
+            android:background="@color/finestBlack"
             android:text="PLAYLIST   DATA"
             android:textAlignment="center"
+            android:textColor="@color/off_white"
             android:textSize="20dp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -34,16 +36,18 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/tableView"
         android:layout_marginTop="30dp"
-        table:tableView_columnCount="3" />
+        table:tableView_columnCount="3"
+        table:tableView_headerColor="@color/Color_Teal" />
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/clear_db"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="45dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/red"
+        android:background="@color/finestBlack"
         android:text="C L E A R     D A T A B A S E"
-        android:textSize="25dp" />
+        android:textColor="@color/off_white"
+        android:textSize="20dp" />
 
 
     <android.support.design.widget.FloatingActionButton

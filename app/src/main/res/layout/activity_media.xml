@@ -5,6 +5,7 @@
     android:id="@+id/activity_all_cards_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/backgroundone"
     android:paddingLeft="4dp"
     android:paddingRight="4dp">
 
