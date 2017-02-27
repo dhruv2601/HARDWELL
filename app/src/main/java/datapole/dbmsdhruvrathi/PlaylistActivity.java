@@ -2,6 +2,7 @@ package datapole.dbmsdhruvrathi;
 
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -72,8 +73,8 @@ public class PlaylistActivity extends Fragment {
             }
 
             final TableView<String[]> tableView = (TableView<String[]>) view.findViewById(R.id.tableView);
-            tableView.addDataClickListener(new CarClickListener());
             tableView.setDataAdapter(new SimpleTableDataAdapter(view.getContext(), DATA_TO_SHOW));
+            tableView.addDataClickListener(new CarClickListener());
             tableView.setHeaderBackground(R.drawable.backgroundone);
 
             createNew = (FloatingActionButton) view.findViewById(R.id.fab_add_playlist);
@@ -110,6 +111,12 @@ public class PlaylistActivity extends Fragment {
         @Override
         public void onDataClicked(int rowIndex, String[] clickedCar) {
             ArrayList<Integer> allSongsID = db.getPlaylistSongs(clickedCar[0]);
+
+//            Toast.makeText(getContext(), "Current Playlist playing...", Toast.LENGTH_SHORT).show();
+            SharedPreferences pref = getContext().getSharedPreferences("currPlayL",0);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putInt("pID",rowIndex);
+            editor.commit();
 
             Log.d(TAG, "insidePl");
 

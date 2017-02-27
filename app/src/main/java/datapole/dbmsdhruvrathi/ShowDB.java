@@ -1,5 +1,6 @@
 package datapole.dbmsdhruvrathi;
 
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -64,12 +65,18 @@ public class ShowDB extends Fragment {
             TableView<String[]> tablePlaylist = (TableView<String[]>) view.findViewById(R.id.tablePlaylist);
             ArrayList<Integer> songsPlaylist = new ArrayList<>();
 
-            songsPlaylist = db.getPlaylistSongs("0");
-            for (int i = 0; i < songsPlaylist.size(); i++) {
-                DATA_TO_SHOW_P_LIST[i][0] = String.valueOf(i + 1);
-                DATA_TO_SHOW_P_LIST[i][1] = songList[songsPlaylist.get(i)];
+            SharedPreferences pref = this.getContext().getSharedPreferences("currPlayL", 0);
+            int id = pref.getInt("pID", -1);
+            if (id == -1) {
+                DATA_TO_SHOW_P_LIST[0][1] = "NO PLAYLIST EXISTS";
+//                DATA_TO_SHOW_P_LIST[0][1] = "";
+            } else {
+                songsPlaylist = db.getPlaylistSongs("0");
+                for (int i = 0; i < songsPlaylist.size(); i++) {
+                    DATA_TO_SHOW_P_LIST[i][0] = String.valueOf(i + 1);
+                    DATA_TO_SHOW_P_LIST[i][1] = songList[songsPlaylist.get(i)];
+                }
             }
-
             tablePlaylist.setDataAdapter(new SimpleTableDataAdapter(view.getContext(), DATA_TO_SHOW_P_LIST));
             tablePlaylist.setHeaderBackground(R.drawable.backgroundone);
 

@@ -32,4 +32,6 @@ dependencies {
     compile 'de.codecrafters.tableview:tableview:2.5.0'
     compile 'com.thefinestartist:finestwebview:1.2.7'
     compile 'com.android.support:support-v4:24.2.1'
+    debugCompile 'io.github.skyhacker2:sqliteonweb:1.0.1'
+    releaseCompile 'io.github.skyhacker2:sqliteonweb-no-op:1.0.2'
 }

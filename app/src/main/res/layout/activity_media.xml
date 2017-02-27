@@ -60,6 +60,7 @@
         android:clickable="true"
         android:src="@drawable/youtube"
         app:fabSize="normal"
+        android:visibility="gone"
         android:layout_above="@+id/fab_play"
         android:layout_alignLeft="@+id/fab_play"
         android:layout_alignStart="@+id/fab_play" />

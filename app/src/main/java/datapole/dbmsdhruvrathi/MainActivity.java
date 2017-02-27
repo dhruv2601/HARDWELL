@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
+import io.github.skyhacker2.sqliteonweb.SQLiteOnWeb;
+
 public class MainActivity extends AppCompatActivity {
 
     public TabLayout tabLayout;
@@ -64,5 +66,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setText("MEDIA");
         tabLayout.getTabAt(1).setText("PLAYLISTS");
         tabLayout.getTabAt(2).setText("DATABASE");
+
+        SQLiteOnWeb.init(this,6969).start();
     }
 }
