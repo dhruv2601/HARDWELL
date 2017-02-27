@@ -2,9 +2,11 @@ package datapole.dbmsdhruvrathi;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +16,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import datapole.dbmsdhruvrathi.model.Playlist;
 
 /**
  * Created by dhruv on 29/12/16.
@@ -45,9 +50,54 @@ public class allCardRecyclerViewAdapter
             itemView.setOnClickListener(this);
         }
 
+        int selected = 0;
+        ArrayList<String> playNames=new ArrayList<>();
+        HashMap<String, Integer> map = new HashMap<>();
+
         @Override
         public void onClick(View v) {
-            db.addSong(getAdapterPosition());
+            //display dialog
+            db = new DataBaseHandler(context);
+            playNames.clear();
+            map.clear();
+            selected=0;
+
+            ArrayList<Playlist> playlistList = new ArrayList<>();
+            playlistList=db.getPlaylistList();
+
+            for (int i = 0; i < playlistList.size(); i++) {
+                playNames.add(playlistList.get(i).getName());
+                map.put(playlistList.get(i).getName(), playlistList.get(i).getPid());
+            }
+            final String [] plays = playNames.toArray(new String[playNames.size()]);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            // Set the dialog title
+            builder.setTitle("Choose playlists to add to").
+                    setSingleChoiceItems(plays, selected,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    selected = map.get(plays[which]);
+                                }
+                            })
+                    // Set the action buttons
+                    .setPositiveButton("ADD", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            db.addSongToPlaylist(getAdapterPosition(), selected);
+                        }
+                    })
+                    .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+
+                        }
+                    });
+
+            builder.create().show();
+
+
+            //db.addSong(getAdapterPosition());
             myClickListener.onItemClick(getAdapterPosition(), v);
         }
     }
