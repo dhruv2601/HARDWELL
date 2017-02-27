@@ -28,6 +28,7 @@ public class MediaActivity extends Fragment {
     public FloatingActionButton play;
     public FloatingActionButton next;
     public FloatingActionButton previous;
+    public FloatingActionButton youtube;
     public DataBaseHandler db;
     public String songList[] = {
             "onedance",
@@ -66,11 +67,20 @@ public class MediaActivity extends Fragment {
             play = (FloatingActionButton) view.findViewById(R.id.fab_play);
             next = (FloatingActionButton) view.findViewById(R.id.fab_next);
             previous = (FloatingActionButton) view.findViewById(R.id.fab_previous);
+            youtube = (FloatingActionButton) view.findViewById(R.id.fab_youtube);
 
             db = new DataBaseHandler(getContext());
 
             final int[] songNo = {0};
             final MediaPlayer[] mPlayer = {MediaPlayer.create(getContext(), R.raw.onedance)};
+
+            youtube.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(view.getContext(),YouTube.class);
+                    startActivity(i);
+                }
+            });
 
             play.setOnClickListener(new View.OnClickListener() {
                 @Override

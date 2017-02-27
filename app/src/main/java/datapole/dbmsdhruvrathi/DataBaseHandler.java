@@ -76,8 +76,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return allSongsID;
     }
 
-
-
     public ArrayList<Integer> getSongsQueue() {
         Log.d(TAG, "afterArr");
         ArrayList<Integer> allSongsID = new ArrayList<>();
