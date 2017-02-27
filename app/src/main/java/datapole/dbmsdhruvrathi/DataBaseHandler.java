@@ -105,7 +105,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     public ArrayList<Integer> getPlaylistSongs(String varPass) {
         ArrayList<Integer> allSongsID = new ArrayList<>();
-        String selectQuery = "SELECT " + KEY_SONG_ID + " FROM " + TABLE_CONTAINS + " where " + KEY_PLAYLIST_ID.equals(varPass);
+        String selectQuery = "SELECT " + KEY_SONG_ID + " FROM " + TABLE_CONTAINS;
+//                + " where " + KEY_PLAYLIST_ID.equals(varPass);
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -119,7 +120,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
         return allSongsID;
     }
-
 
     public ArrayList<Integer> getSongsList() {
         Log.d(TAG, "afterArr");

@@ -34,6 +34,7 @@ public class ShowDB extends Fragment {
 
     private static final String[][] NO_DATA = {{"There is nothing to show "}, {"in database"}};
     private static final String[][] DATA_TO_SHOW = new String[50][2];
+    private static final String[][] DATA_TO_SHOW_P_LIST = new String[50][2];
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +62,15 @@ public class ShowDB extends Fragment {
             tableView.setHeaderBackground(R.drawable.backgroundone);
 
             TableView<String[]> tablePlaylist = (TableView<String[]>) view.findViewById(R.id.tablePlaylist);
-            tablePlaylist.setDataAdapter(new SimpleTableDataAdapter(view.getContext(), DATA_TO_SHOW));
+            ArrayList<Integer> songsPlaylist = new ArrayList<>();
+
+            songsPlaylist = db.getPlaylistSongs("0");
+            for (int i = 0; i < songsPlaylist.size(); i++) {
+                DATA_TO_SHOW_P_LIST[i][0] = String.valueOf(i + 1);
+                DATA_TO_SHOW_P_LIST[i][1] = songList[songsPlaylist.get(i)];
+            }
+
+            tablePlaylist.setDataAdapter(new SimpleTableDataAdapter(view.getContext(), DATA_TO_SHOW_P_LIST));
             tablePlaylist.setHeaderBackground(R.drawable.backgroundone);
 
             clearDB = (AppCompatButton) view.findViewById(R.id.clear_db);

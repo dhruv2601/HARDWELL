@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,17 +72,11 @@ public class PlaylistActivity extends Fragment {
             }
 
             final TableView<String[]> tableView = (TableView<String[]>) view.findViewById(R.id.tableView);
+            tableView.addDataClickListener(new CarClickListener());
             tableView.setDataAdapter(new SimpleTableDataAdapter(view.getContext(), DATA_TO_SHOW));
             tableView.setHeaderBackground(R.drawable.backgroundone);
-            tableView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    tableView.addDataClickListener(new CarClickListener());
-                }
-            });
 
             createNew = (FloatingActionButton) view.findViewById(R.id.fab_add_playlist);
-
             createNew.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -110,10 +105,13 @@ public class PlaylistActivity extends Fragment {
         return view;
     }
 
-    public class CarClickListener implements TableDataClickListener<PlaylistActivity> {
+    public class CarClickListener implements TableDataClickListener<String[]> {
+
         @Override
-        public void onDataClicked(int rowIndex, PlaylistActivity clickedCar) {
-            ArrayList<Integer> allSongsID = db.getPlaylistSongs(String.valueOf(rowIndex));
+        public void onDataClicked(int rowIndex, String[] clickedCar) {
+            ArrayList<Integer> allSongsID = db.getPlaylistSongs(clickedCar[0]);
+
+            Log.d(TAG, "insidePl");
 
             final MediaPlayer[] mPlayer = {MediaPlayer.create(getContext(), R.raw.onedance)};
             if (mPlayer[0].isPlaying() == true) {
